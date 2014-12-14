@@ -1,0 +1,237 @@
+# /etc/skel/.bashrc
+#
+# AUTHOR: Daniel Klopp 
+# COPYRIGHT: GNU Public License 
+# OS Support: Theoretically OSX and Linux, not always thoroughly tested
+# DESCRIPTION: My BASH profile.  I tend to source it from .bashrc and keep
+# this in github.  I do have other profiles for "Work specific".  I keep those
+
+
+if [[ $- != *i* ]] ; then
+	# Shell is non-interactive.  Be done now!
+   # This handles odd cases with scp 
+	return
+fi
+
+PATH=~/Documents/projects/scripts/bin:$PATH
+export PATH
+# Put your fun stuff here.
+
+alias cp='/bin/cp -i'
+if [ `uname` == "Darwin" ]; then
+	alias ls='/bin/ls -aFG'
+   alias emacs='/Applications/Emacs.app/Contents/MacOS/Emacs'
+else
+	alias ls='/bin/ls -aF --color=always'
+fi
+alias mv='/bin/mv -i'
+alias rm='/bin/rm -i'
+
+## Colors
+COLOR_RED="\[\e[31;40m\]"
+COLOR_GREEN="\[\e[32;40m\]"
+COLOR_YELLOW="\[\e[33;40m\]"
+COLOR_BLUE="\[\e[34;40m\]"
+COLOR_MAGENTA="\[\e[35;40m\]"
+COLOR_CYAN="\[\e[36;40m\]"
+COLOR_RED_BOLD="\[\e[31;1m\]"
+COLOR_GREEN_BOLD="\[\e[32;1m\]"
+COLOR_YELLOW_BOLD="\[\e[33;1m\]"
+COLOR_BLUE_BOLD="\[\e[34;1m\]"
+COLOR_MAGENTA_BOLD="\[\e[35;1m\]"
+COLOR_CYAN_BOLD="\[\e[36;1m\]"
+COLOR_NONE="\[\e[0m\]"
+
+KEYSIZE=4
+TERMDISPLAYSETUP=$((RANDOM%KEYSIZE))
+case "$TERMDISPLAYSETUP" in
+	0)
+		PS1="${COLOR_MAGENTA_BOLD}: ${COLOR_RED_BOLD}\u${COLOR_MAGENTA_BOLD} @ ${COLOR_RED_BOLD}\h ${COLOR_MAGENTA_BOLD}; "
+	;;
+	1)
+		PS1="${COLOR_GREEN_BOLD}: ${COLOR_CYAN_BOLD}\u${COLOR_GREEN_BOLD} @ ${COLOR_CYAN_BOLD}\h ${COLOR_GREEN_BOLD}; "
+	;;
+	2)
+		PS1="${COLOR_MAGENTA_BOLD}: ${COLOR_BLUE_BOLD}\u${COLOR_MAGENTA_BOLD} @ ${COLOR_BLUE_BOLD}\h ${COLOR_MAGENTA_BOLD}; "
+	;;
+	3)
+		PS1="${COLOR_RED_BOLD}: ${COLOR_BLUE_BOLD}\u${COLOR_RED_BOLD} @ ${COLOR_BLUE_BOLD}\h ${COLOR_RED_BOLD}; "
+	;;
+	*)
+		echo Warning, we received a value of
+		echo $TERMDISPLAYSETUP when we should not
+		echo have exceeded the key size of $KEYSIZE
+		echo Fix this please.
+	;;
+esac
+export PS1
+
+unset TERMDISPLAYSETUP
+unset KEYSIZE
+
+# There can never be too much history
+export HISTSIZE=7000
+export HISTTIMEFORMAT="%Y-%m-%d %T: "
+
+
+if [ `uname` != "Darwin" ]; then
+   export GTK_IM_MODULE=ibus
+   export XMODIFIERS=@im=ibus
+   export QT_IM_MODULE=ibus
+   alias ]='/usr/bin/xdg-open'
+fi
+
+
+#[[ -s "$HOME/.pythonbrew/etc/bashrc" ]] && source "$HOME/.pythonbrew/etc/bashrc"
+alias pydev='source "$HOME/.pythonbrew/etc/bashrc"'
+
+function new_python_package {
+# I cannot remember where I grabbed this from
+# I found it off some website and modified it when
+# I was creating lots of Python modules.
+# Perhaps there is a better way to do this now,
+# like with ruby's bundle gem $mygem
+mkdir "$1"
+cd "$1"
+mkdir -p bin "$1"/test docs 
+touch CHANGES.txt
+echo 'This belongs to Dan Klopp (dsklopp@gmail.com)' > LICENSE.txt
+echo 'and whose exclusive property and all rights entailed' >> LICENSE.txt
+
+echo "v0.99a, " `date '+%B %d, %Y'` >> CHANGES.txt
+
+echo 'include *.txt' > MANIFEST.in
+echo 'recursive-include docs *.txt' >> MANIFEST.in
+
+cat <<'EOF' > README.txt
+===========
+Towel Stuff
+===========
+
+Towel Stuff provides such and such and so and so. You might find
+it most useful for tasks involving <x> and also <y>. Typical usage
+often looks like this::
+
+    #!/usr/bin/env python
+
+    from towelstuff import location
+    from towelstuff import utils
+
+    if utils.has_towel():
+        print "Your towel is located:", location.where_is_my_towel()
+
+(Note the double-colon and 4-space indent formatting above.)
+
+Paragraphs are separated by blank lines. *Italics*, **bold**,
+and ``monospace`` look like this.
+
+
+A Section
+=========
+
+Lists look like this:
+
+* First
+
+* Second. Can be multiple lines
+  but must be indented properly.
+
+
+Contributors
+============
+
+A Sub-Section
+-------------
+
+Numbered lists look like you'd expect:
+
+1. hi there
+
+2. must be going
+
+Urls are http://like.this and links can be
+written `like this <http://www.example.com/foo/bar>`_.
+
+EOF
+
+echo "are reserved for this python package called $1" >> LICENSE.txt
+echo '#!/usr/bin/env python' > setup.py
+echo '#!/usr/bin/env python' > "$1"/__init__.py
+echo '#!/usr/bin/env python' > "$1"/test_location.py
+echo '#!/usr/bin/env python' > "$1"/test_utils.py
+echo '#!/usr/bin/env python' > "$1"/test/__init__.py
+echo '#!/usr/bin/env python' > "$1"/test/test_location.py
+echo '#!/usr/bin/env python' > "$1"/test/test_utils.py
+
+
+cat <<EOF > setup.py
+from distutils.core import setup
+
+setup(
+    name='$1',
+    version='0.9a',
+    author='Dan Klopp',
+    author_email='dsklopp@gmail.com',
+    packages=['$1', '$1.test'],
+    #scripts=['bin/stowe-towels.py','bin/wash-towels.py'],
+    scripts=[]
+    url='http://pypi.python.org/pypi/$1/',
+    license='LICENSE.txt',
+    description='$1',
+    long_description=open('README.txt').read(),
+    install_requires=[],
+    #install_requires=[
+    #    "Django >= 1.1.1",
+    #    "caldav == 0.1.4",
+    #],
+)
+EOF
+# Go back to the parent directory, like
+# all other such tools
+cd ..
+}
+
+# JSON stuff
+jl () {
+  jltmp="/tmp/jl-$$"
+  if [[ -f "$1" ]]; then
+    python -m simplejson.tool $1 >"$jltmp" 2>&1 && { echo "JSON Good"; rm "$jltmp"; return 0; } || { cat "$jltmp"; rm "$jltmp"; return 1; }
+  else
+    echo "Usage: jl <file.json>"
+  fi
+}
+
+ppj () {
+  ppjtmp="/tmp/ppj-$$"
+  infile="$1"
+  outfile="$2"
+  command="python -m simplejson.tool"
+  if [[ $@ ]]; then
+    if jl "$infile" >"$ppjtmp"; then
+      if [[ "$outfile" ]]; then
+        if [[ "$infile" == "$outfile" ]]; then
+          cp "$infile" "$ppjtmp" && infile="$ppjtmp"
+        fi
+        $command "$infile" | sed 's/  / /g' > "$outfile"
+      else
+        $command "$infile" | sed 's/  / /g'
+      fi
+    else
+      cat "$ppjtmp"
+    fi
+  else
+    echo "Usage: ppj <file1.json> [ <file2.json> | <file1.json> ]"
+  fi
+  [[ -f "$ppjtmp" ]] && rm "$ppjtmp"
+}
+
+
+
+eval "$(pyenv init -)"
+export DOCKER_HOST=tcp://localhost:4243
+
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+export PS1=": \u@\h ; "
+
+
