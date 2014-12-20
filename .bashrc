@@ -11,6 +11,12 @@ source ~/.bash_danklopp
 # the referenced files can be found outside of the assignment,
 # nor is any name given.
 
-#source ~/.bash_assignment_1
-#source ~/.bash_assignment_2
-#source ~/.bash_assignment_3
+if [ -f ~/.bash_assignment_1 ]; then
+   source ~/.bash_assignment_1
+fi
+if [ -f ~/.bash_assignment_2 ]; then
+   source ~/.bash_assignment_2
+fi
+if [ -f ~/.bash_assignment_3 ]; then
+   source ~/.bash_assignment_3
+fi
