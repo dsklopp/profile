@@ -234,6 +234,32 @@ else
 fi
 export DOCKER_HOST=tcp://localhost:4243
 
+which rbenv &> /dev/null
+if [ $? -eq 0 ]; then
+   eval "$(rbenv init -)"
+else
+   echo "You do not have Ruby properly configured for rbenv to function"
+fi
+if [ `which python` ]; then
+   pyvers=`python -V 2>&1`
+   echo "Using Python: $pyvers"
+fi
+if [ `which ruby` ]; then
+   rubvers=`ruby -v`
+   echo "Using Ruby: $rubvers"
+fi
 
-
-
+# Set the JAVA_HOME if applicable on a MAC
+if [ `uname` == "Darwin" ]; then
+   if [ ! -f /usr/libexec/java_home ]; then
+      echo "WARNING: You have no java installed, java_home not found"
+   else
+      JAVA_HOME=`/usr/libexec/java_home`
+      JAVA_HOME=`dirname $JAVA_HOME`
+      JAVA_HOME=`dirname $JAVA_HOME`
+      export JAVA_HOME
+      STUDIO_JDK=$JAVA_HOME
+      export STUDIO_JDK
+      echo JAVA_HOME=$JAVA_HOME
+   fi
+fi
