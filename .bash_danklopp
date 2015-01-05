@@ -291,4 +291,4 @@ function enable_kivy {
 #if [ -d $HOME/.pyenv/bin ]; then
 #	PATH=$HOME/.pyenv/bin:$PATH
 #fi
-export PATH
+#export PATH
