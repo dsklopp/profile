@@ -241,8 +241,13 @@ export DOCKER_HOST=tcp://localhost:4243
 which rbenv &> /dev/null
 if [ $? -eq 0 ]; then
    eval "$(rbenv init -)"
-   rubvers=`ruby -v | awk '{print $2}'`
-   echo "Using Ruby: $rubvers"
+   which ruby &> /dev/null
+   if [ $? -eq 0 ]; then
+      rubvers=`ruby -v | awk '{print $2}'`
+      echo "Using Ruby: $rubvers"
+   else
+      echo ERROR: rbenv is installed but ruby was not 1>&2
+   fi
 else
    echo "You do not have Ruby properly configured for rbenv to function"
 fi
