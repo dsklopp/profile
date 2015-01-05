@@ -289,10 +289,10 @@ function enable_kivy {
    done
    export PATH=~/.pyenv/versions/2.7.9/bin:~/.buildozer/android//platform/android-sdk-21/platform-tools:$NEWPATH
 }
-if [ -d $HOME/.rbenv/bin ]; then
-	PATH=$HOME/.rbenv/bin:$PATH
-fi
-if [ -d $HOME/.pyenv/bin ]; then
-	PATH=$HOME/.pyenv/bin:$PATH
-fi
+#if [ -d $HOME/.rbenv/bin ]; then
+#	PATH=$HOME/.rbenv/bin:$PATH
+#fi
+#if [ -d $HOME/.pyenv/bin ]; then
+#	PATH=$HOME/.pyenv/bin:$PATH
+#fi
 export PATH
