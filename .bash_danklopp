@@ -255,11 +255,35 @@ if [ `uname` == "Darwin" ]; then
       echo "WARNING: You have no java installed, java_home not found"
    else
       JAVA_HOME=`/usr/libexec/java_home`
-      JAVA_HOME=`dirname $JAVA_HOME`
-      JAVA_HOME=`dirname $JAVA_HOME`
+      #JAVA_HOME=`dirname $JAVA_HOME`
+      #JAVA_HOME=`dirname $JAVA_HOME`
+      STUDIO_JDK=`dirname $JAVA_HOME`
+      STUDIO_JDK=`dirname $STUDIO_JDK`
       export JAVA_HOME
-      STUDIO_JDK=$JAVA_HOME
       export STUDIO_JDK
       echo JAVA_HOME=$JAVA_HOME
    fi
 fi
+
+function enable_kivy {
+   pythonversion=`python -V 2>&1 |awk '{print $2}'`
+   if [ "$pythonversion" != "2.7.9" ]; then
+      echo ERROR, only Python 2.7.9 was configured to use Kivy, refusing to configure. 1>&2
+      return
+   fi
+   NEWPATH=""
+   for apath in `echo $PATH | tr ':' ' '`; do
+      if [ "$apath" == "$HOME/.pyenv/versions/2.7.9/bin" ]; then
+         continue
+      fi
+      if [ "$apath" == "$HOME/.buildozer/android//platform/android-sdk-21/platform-tools" ]; then
+         continue
+      fi
+      if [ -z "$NEWPATH" ]; then
+         NEWPATH=$apath
+      else
+         NEWPATH=$apath:$NEWPATH
+      fi
+   done
+   export PATH=~/.pyenv/versions/2.7.9/bin:~/.buildozer/android//platform/android-sdk-21/platform-tools:$NEWPATH
+}
