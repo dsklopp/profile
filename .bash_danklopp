@@ -225,7 +225,9 @@ ppj () {
   [[ -f "$ppjtmp" ]] && rm "$ppjtmp"
 }
 
-
+PATH=$HOME/.rbenv/bin:$PATH
+PATH=$HOME/.pyenv/bin:$PATH
+export PATH
 which pyenv &> /dev/null
 if [ $? -eq 0 ]; then
    eval "$(pyenv init -)"
@@ -245,7 +247,7 @@ if [ `which python` ]; then
    echo "Using Python: $pyvers"
 fi
 if [ `which ruby` ]; then
-   rubvers=`ruby -v`
+   rubvers=`ruby -v | awk '{print $2}'`
    echo "Using Ruby: $rubvers"
 fi
 
@@ -287,3 +289,10 @@ function enable_kivy {
    done
    export PATH=~/.pyenv/versions/2.7.9/bin:~/.buildozer/android//platform/android-sdk-21/platform-tools:$NEWPATH
 }
+if [ -d $HOME/.rbenv/bin ]; then
+	PATH=$HOME/.rbenv/bin:$PATH
+fi
+if [ -d $HOME/.pyenv/bin ]; then
+	PATH=$HOME/.pyenv/bin:$PATH
+fi
+export PATH
