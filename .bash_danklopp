@@ -318,3 +318,20 @@ function install_rbenv {
 function myhelp {
   cat ~/.bash_danklopp | grep ^function
 }
+
+function configure_vim {
+  if [ ! -e "$1" ]; then
+    echo The .vimrc file "$1" does not exist, please give the absolute path
+    echo to your .vimrc file.
+    return 1
+  fi
+  if [ ! -d ~/.vim/bundle ]; then
+    mkdir -p ~/.vim/bundle
+  fi
+  if [ "$HOME/.vimrc" != "$1" ]; then
+    ln -s "$1" "$HOME/.vimrc"
+  fi
+  if [ ! -e ~/.vim/bundle/Vundle.vim ]; then
+    git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+  fi
+}
