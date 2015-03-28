@@ -315,3 +315,6 @@ function install_rbenv {
   echo to your path
   
 }
+function myhelp {
+  cat ~/.bash_danklopp | grep ^function
+}
