@@ -290,13 +290,26 @@ function enable_kivy {
    done
    export PATH=~/.pyenv/versions/2.7.9/bin:~/.buildozer/android//platform/android-sdk-21/platform-tools:$NEWPATH
 }
-#if [ -d $HOME/.rbenv/bin ]; then
-#	PATH=$HOME/.rbenv/bin:$PATH
-#fi
-#if [ -d $HOME/.pyenv/bin ]; then
-#	PATH=$HOME/.pyenv/bin:$PATH
-#fi
-#export PATH
+
+function install_pyenv {
+  which pyenv &> /dev/null
+  if [ $? -eq 0 ]; then
+    echo ERROR: pyenv in path, aborting 1>&2
+    return 1
+  fi
+  cd $HOME
+  git clone https://github.com/yyuu/pyenv.git ~/.pyenv
+  export PYENV_ROOT="$HOME/.pyenv" 
+  export PATH="$PYENV_ROOT/bin"
+  pyenv rehash
+  echo
+  echo You must add:
+  echo 'export PYENV_ROOT="$HOME/.pyenv"'
+  echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
+  echo to your path
+  
+
+}
 
 function install_rbenv {
   which rbenv &> /dev/null
