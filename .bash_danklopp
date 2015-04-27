@@ -356,3 +356,43 @@ function configure_terraform {
    wget https://dl.bintray.com/mitchellh/terraform/terraform_0.4.2_linux_amd64.zip
    sudo mv * /usr/bin/
 }
+function create_chefrepo_for_chefzero {
+   mkdir chef-repo
+   cd chef-repo
+   mkdir data_bags roles environments .chef cookbooks
+   cat <<EOF > .chef/knife.rb
+current_dir = File.dirname(__FILE__)
+user = ENV['OPSCODE_USER'] || ENV['USER']
+node_name                user
+client_key               "#{current_dir}/#{user}.pem"
+validation_key           "#{current_dir}/validator.pem"
+chef_server_url          "http://127.0.0.1:8889/"
+cookbook_path            ["#{current_dir}/../cookbooks"]
+EOF
+   cat <<EOF > .chef/$USER.pem
+-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEAqNsLXIc4NtfZlyAP7yWKpZ8WlslETygSbgsWjz/r2+iF1iEaEisXbckdjP1f
+cUsgxOvRVpm6f3iU9jWyE5DQG6m44cjSCPstMQnMz6BiS7Rv+oAEDAyT+AoYnq9vAYPmrjy+xaiG
+ozTw1MBzlOqkZ1oVWpQE8Fr5sbC017Y9euMCObkV2jpM3t6fH27QQc+eJ/e5BRap+anmbiDBwTpP
+7986AcA1LQ9OtHqsY7Hzub+gbyMORzQOE/eP6E86sF6qla3/z+uUozGOzSaPqKwBjeSdD0bNMIOe
+1BpfmPfSEB31DXGHLiBxNEtuicz4XEVF0jVZP8RT87WySVKrA0e+tQIDAQABAoIBAE9ZJ9yiWmND
+Saf/1B0QajfsK4ROLkB4VzjJEx/b7O0ZNpNqWMMC5u6bXLydcFVf9ZU0L9pfQUmXk4CjuPwCyBjH
+x+6qHTFFP3ZU4Z8MAkULFLgFomE7I+mibPFdBXAT2Lo2J3vg9uwI+8cubOIk5X7/0RsQhcWhKsc6
+f7ECnZ95+7fPxo/mJ3eIAqAiXhxtgWA/ggnhgRqvLSaPQQc3HRBn4RMRRxW3yxfKL5VGq8a2SsoV
+uH3JqcMxbL4aHtso9G5NXnr8QO+rJwFl3X+4ZOXKxeyMo8K2cJYTkFzKKrT2ONdscEGV4E8UtCAQ
+00g8N1KBwnGJ6MFj6nULTGluwqECgYEA4pZYvt4z8qJDgMNmJZoUHxQDWsvCfLl4VoSvpZWxDEfm
++VI/JQ8EUAv2THTS7ppRb+d9/P/3OoKuzgE1S9K6TmGCIkE0eAhsNgpCcrdXVbYR3ITbpluDUhXF
+Z8sBGuJ1UAx3vaLSIxAqX5WYeU695y4S4bWcTtH15rmYy+5f6x0CgYEAvsY8Hn7VJ/UBpMV6Wsg4
+iN0idV762+2SxzeVknP4WaWNICJfI21lIxZMRUVk02tObGBwVibCZ1kqPAaMckaWwYoQ6OrvtDEi
+inUHasasAWsuf+AGOACyxEGcJO4e0bgWXwP5ZjWpPq4kNQbu+/saqZsGAWACT+Z3mjXg2E0HtnkC
+gYADsioeaud0BLuPJSDMajf7zcrEN2Cjwi65Uo6+57MsnRuiY3oOM7GBUMCivKEYLUI4zhDbCJ3S
+wYDycUiaRQSu9J43ytJ9Rr3lH8O3tU/iYQbnju86RnHc6+f9am1JL/pz5NArMrW0xrW6O2lySRuF
+4tWCAwFas8gMDGj2opvD7QKBgCdbHevsnmyvzrb/Rk6UH5WciQ9NmNLmH/GZNfIQmptj28lVTesx
+Fjw2zWU8+5/h8zvIaWRcep53do8Lis3IYjFrGjHyxaCWwllt6ynL8pAYXG9k9+N1wWtbXasAtLrv
+Dy5q03iSeWfE5RNLauHw239By+tcsx1oniPiGZCF06GBAoGAOQJ/yiHBX+J1iVrsJYwl0/4iBw5y
+yMtLsNQOkwMdzyXMkGmz8JbQJJxIZZCXcMahI9RXsuGCviVh5w0WZgseE893YQU8rdqbfT0Pbtzk
+aThRm0LNYGrRDxKj/f/EnBPsNDb0U2o+EVr/NB4z2ZZJwnXUtTGdKnYcq+2gLPKMuW4=
+-----END RSA PRIVATE KEY-----
+EOF
+   cp .chef/$USER.pem .chef/validator.pem
+}
