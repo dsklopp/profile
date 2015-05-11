@@ -396,3 +396,22 @@ aThRm0LNYGrRDxKj/f/EnBPsNDb0U2o+EVr/NB4z2ZZJwnXUtTGdKnYcq+2gLPKMuW4=
 EOF
    cp .chef/$USER.pem .chef/validator.pem
 }
+
+function export_aws_creds {
+   if [ ! -f ~/.aws/credentials ]; then
+      echo ERROR: No file ~/.aws/credentials found  1>&2
+      return 1
+   fi
+   if [ `grep -q aws_access_key_id ~/.aws/credentials` ]; then
+      echo ERROR: aws_access_key_id not set in ~/.aws/credentials  1>&2
+      return 1
+   fi
+   if [ `grep -q aws_secret_access_key ~/.aws/credentials` ]; then
+      echo ERROR: aws_secret_access_key not set in ~/.aws/credentials  1>&2
+      return 1
+   fi
+   key=`grep aws_access_key_id ~/.aws/credentials | tr -d ' ' | awk -F= '{print $2}'`
+   secret=`grep aws_secret_access_key ~/.aws/credentials | tr -d ' ' | awk -F= '{print $2}'`
+   export AWS_ACCESS_KEY_ID=$key
+   export AWS_SECRET_ACCESS_KEY=$secret
+}
