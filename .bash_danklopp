@@ -70,7 +70,7 @@ unset TERMDISPLAYSETUP
 unset KEYSIZE
 
 # There can never be too much history
-export HISTSIZE=12000
+export HISTSIZE=32000
 export HISTTIMEFORMAT="%Y-%m-%d %T: "
 
 
