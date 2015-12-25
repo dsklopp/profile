@@ -415,3 +415,7 @@ function export_aws_creds {
    export AWS_ACCESS_KEY_ID=$key
    export AWS_SECRET_ACCESS_KEY=$secret
 }
+
+if [ `uname` == "Darwin" ]; then
+  alias sublime='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+fi
