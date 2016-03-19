@@ -12,7 +12,10 @@ if [[ $- != *i* ]] ; then
    # This handles odd cases with scp 
 	return
 fi
-
+if [ `uname -o` == "Cygwin" ]; then
+	PATH="/usr/local/bin:/usr/bin:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files (x86)/Skype/Phone"
+	export PATH
+fi
 PATH=~/Documents/projects/scripts/bin:$PATH
 export PATH
 # Put your fun stuff here.
@@ -300,7 +303,7 @@ function install_pyenv {
   cd $HOME
   git clone https://github.com/yyuu/pyenv.git ~/.pyenv
   export PYENV_ROOT="$HOME/.pyenv" 
-  export PATH="$PYENV_ROOT/bin"
+  export PATH="$PYENV_ROOT/bin:$PATH"
   pyenv rehash
   echo
   echo You must add:
