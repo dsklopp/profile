@@ -418,4 +418,12 @@ function export_aws_creds {
 
 if [ `uname` == "Darwin" ]; then
   alias sublime='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+  export GOPATH=~/go
+  export PATH=$PATH:~/Documents/code/xaas/xaas-scripts
+  export PATH=$PATH:/usr/local/sbin:/usr/local/bin
+fi
+which docker-machine &> /dev/null
+if [ $? -eq 0 ]; then
+  echo Docker-machine found, activating environment
+  eval $(docker-machine env)
 fi
