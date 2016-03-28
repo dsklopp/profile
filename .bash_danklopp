@@ -12,7 +12,9 @@ if [[ $- != *i* ]] ; then
    # This handles odd cases with scp 
 	return
 fi
-if [ `uname -o` == "Cygwin" ]; then
+if [ `uname` == "Darwin" ]; then
+  : # Sadly I have to do this as the next command only works on Cygwin
+elif [ `uname -o` == "Cygwin" ]; then
 	PATH="/usr/local/bin:/usr/bin:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files (x86)/Skype/Phone"
 	export PATH
 fi
@@ -424,6 +426,11 @@ if [ `uname` == "Darwin" ]; then
   export GOPATH=~/go
   export PATH=$PATH:~/Documents/code/xaas/xaas-scripts
   export PATH=$PATH:/usr/local/sbin:/usr/local/bin
+  export PATH=$PATH:$GOPATH/bin
+fi
+if [ -e ~/Documents/code/quantum ]; then
+  PATH=~/Documents/code/quantum/quantum-flip/bin:$PATH
+  export PATH
 fi
 which docker-machine &> /dev/null
 if [ $? -eq 0 ]; then
