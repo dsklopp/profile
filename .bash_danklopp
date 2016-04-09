@@ -14,6 +14,9 @@ if [[ $- != *i* ]] ; then
 fi
 if [ `uname -o` == "Cygwin" ]; then
 	PATH="/usr/local/bin:/usr/bin:/cygdrive/c/WINDOWS/system32:/cygdrive/c/WINDOWS:/cygdrive/c/WINDOWS/System32/Wbem:/cygdrive/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files (x86)/Skype/Phone"
+	if [ -d /cygdrive/c/Go/bin ]; then
+		PATH=/cygdrive/c/Go/bin:$PATH
+	fi
 	export PATH
 fi
 PATH=~/Documents/projects/scripts/bin:$PATH
@@ -421,4 +424,23 @@ function export_aws_creds {
 
 if [ `uname` == "Darwin" ]; then
   alias sublime='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+fi
+
+which go &> /dev/null
+if [ $? -eq 0 ]; then
+	echo Go detected, setting up environment
+	if [ `uname -o` == "Cygwin" ]; then
+		GOPATH="c:\cygwin64\home\synfi\go"
+	else
+		GOPATH=$HOME/go
+	fi
+	export GOPATH
+	PATH="$GOPATH/bin:$PATH"
+	export PATH
+	which godep &> /dev/null
+	if [ $? -ne 0 ]; then
+		echo Godep not installed, install via:
+		echo go get github.com/tools/godep
+
+	fi
 fi
