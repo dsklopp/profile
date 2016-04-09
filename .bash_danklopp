@@ -108,104 +108,101 @@ function new_python_package {
 # I was creating lots of Python modules.
 # Perhaps there is a better way to do this now,
 # like with ruby's bundle gem $mygem
-mkdir "$1"
-cd "$1"
-mkdir -p bin "$1"/test docs 
-touch CHANGES.txt
-echo 'This belongs to Dan Klopp (dsklopp@gmail.com)' > LICENSE.txt
-echo 'and whose exclusive property and all rights entailed' >> LICENSE.txt
+  VERSION="v0.1.0"
+  if [ -z "$1" ]; then
+    echo ERROR: First argument must be package name 1>&2
+    return 1
+  fi
+  packagename="$1"
+  mkdir "${packagename}"
+  cd "${packagename}"
+  mkdir -p bin "${packagename}"/tests
+  #docs 
+  touch CHANGES.txt
+  echo 'This belongs to Dan Klopp (dsklopp@gmail.com)' > LICENSE.txt
+  echo 'and whose exclusive property and all rights entailed' >> LICENSE.txt
+  echo "are reserved for this python package called ${packagename}" >> LICENSE.txt
 
-echo "v0.99a, " `date '+%B %d, %Y'` >> CHANGES.txt
+  echo "v0.1.0, " `date '+%B %d, %Y'` >> CHANGES.txt
 
-echo 'include *.txt' > MANIFEST.in
-echo 'recursive-include docs *.txt' >> MANIFEST.in
+  echo 'include *.txt' > MANIFEST.in
+  echo 'recursive-include docs *.txt' >> MANIFEST.in
+  echo 'include *.md' > MANIFEST.in
 
-cat <<'EOF' > README.txt
+cat <<'EOF' > README.md
 ===========
-Towel Stuff
+${packagename}
 ===========
 
-Towel Stuff provides such and such and so and so. You might find
+${packagename} provides such and such and so and so. You might find
 it most useful for tasks involving <x> and also <y>. Typical usage
 often looks like this::
 
-    #!/usr/bin/env python
+```
+#!/usr/bin/env python
 
-    from towelstuff import location
-    from towelstuff import utils
+import ${packagename}
+# Use it
+```
 
-    if utils.has_towel():
-        print "Your towel is located:", location.where_is_my_towel()
-
-(Note the double-colon and 4-space indent formatting above.)
-
-Paragraphs are separated by blank lines. *Italics*, **bold**,
-and ``monospace`` look like this.
-
-
-A Section
-=========
-
-Lists look like this:
-
-* First
-
-* Second. Can be multiple lines
-  but must be indented properly.
+To run the tests, utilize nodetests
+```
+nodetests
+```
 
 
-Contributors
+Authors
 ============
 
-A Sub-Section
--------------
-
-Numbered lists look like you'd expect:
-
-1. hi there
-
-2. must be going
-
-Urls are http://like.this and links can be
-written `like this <http://www.example.com/foo/bar>`_.
+Daniel Klopp (dsklopp@gmail.com)
 
 EOF
 
-echo "are reserved for this python package called $1" >> LICENSE.txt
-echo '#!/usr/bin/env python' > setup.py
-echo '#!/usr/bin/env python' > "$1"/__init__.py
-echo '#!/usr/bin/env python' > "$1"/test_location.py
-echo '#!/usr/bin/env python' > "$1"/test_utils.py
-echo '#!/usr/bin/env python' > "$1"/test/__init__.py
-echo '#!/usr/bin/env python' > "$1"/test/test_location.py
-echo '#!/usr/bin/env python' > "$1"/test/test_utils.py
+echo '#!/usr/bin/env python' > "${packagename}"/__init__.py
+echo 'def main():' >> "${packagename}"/__init__.py
+echo '    print("Hello World!")' >> "${packagename}"/__init__.py
+echo '    return "Hello World!"' >> "${packagename}"/__init__.py
 
+
+cat <<EOF > "${packagename}"/tests/test_main.py
+from unittest import TestCase
+
+import ${packagename}
+
+class TestMain(TestCase):
+    def test_is_string(self):
+        s = ${packagename}.main()
+        self.assertTrue(isinstance(s, basestring))
+
+EOF
+touch "${packagename}"/tests/__init__.py
 
 cat <<EOF > setup.py
 from distutils.core import setup
 
 setup(
-    name='$1',
-    version='0.9a',
-    author='Dan Klopp',
-    author_email='dsklopp@gmail.com',
-    packages=['$1', '$1.test'],
-    #scripts=['bin/stowe-towels.py','bin/wash-towels.py'],
-    scripts=[]
-    url='http://pypi.python.org/pypi/$1/',
-    license='LICENSE.txt',
-    description='$1',
-    long_description=open('README.txt').read(),
-    install_requires=[],
-    #install_requires=[
-    #    "Django >= 1.1.1",
-    #    "caldav == 0.1.4",
-    #],
+  name='$packagename',
+  version='${VERSION}',
+  author='Dan Klopp',
+  author_email='dsklopp@gmail.com',
+  packages=['$packagename', '$packagename.tests'],
+  scripts=[],
+  url='http://pypi.python.org/pypi/$packagename/',
+  license='LICENSE.txt',
+  description='$packagename',
+  test_suite='nose.collector',
+  tests_require=['nose'],
+  long_description=open('README.md').read(),
+  install_requires=[],
+  #install_requires=[
+  #    "Django >= 1.1.1",
+  #    "caldav == 0.1.4",
+  #],
 )
 EOF
-# Go back to the parent directory, like
-# all other such tools
-cd ..
+  # Go back to the parent directory, like
+  # all other such tools
+  cd ..
 }
 
 # JSON stuff
@@ -453,7 +450,9 @@ fi
 which go &> /dev/null
 if [ $? -eq 0 ]; then
 	echo Go detected, setting up environment
-	if [ `uname -o` == "Cygwin" ]; then
+  if [ `uname` == "Darwin" ]; then
+    GOPATH=$HOME/go
+	elif [ `uname -o` == "Cygwin" ]; then
 		GOPATH="c:\cygwin64\home\synfi\go"
 	else
 		GOPATH=$HOME/go
