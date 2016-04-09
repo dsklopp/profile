@@ -17,7 +17,16 @@ if [ `uname -o` == "Cygwin" ]; then
 	if [ -d /cygdrive/c/Go/bin ]; then
 		PATH=/cygdrive/c/Go/bin:$PATH
 	fi
+	PATH="/cygdrive/c/Ruby22-x64/bin:$PATH"
 	export PATH
+	alias gem='gem.bat'
+	alias rake='rake.bat'
+	alias erb='erb.bat'
+	alias irb='irb.bat'
+	alias rdoc='rdoc.bat'
+	alias ri='ri.bat'
+	alias rspec='rspec.bat'
+	alias bundle='bundle.bat'
 fi
 PATH=~/Documents/projects/scripts/bin:$PATH
 export PATH
