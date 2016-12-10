@@ -506,7 +506,6 @@ function mygo {
     echo " set \$pack where \$pack is one of the go packages found in list"
   fi
 }
-
 function d {
   for var in `env|grep DOCKER|awk -F= '{print $1}'`; do unset $var; done
   if [ -z "${SWARM_MANAGER}" ]; then
