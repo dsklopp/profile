@@ -467,3 +467,64 @@ if [ $? -eq 0 ]; then
 
 	fi
 fi
+
+GO_PACKS="terraform"
+function mygo {
+  if [ "$1" == "list" ]; then
+    for PACK in ${GO_PACKS}; do
+      echo $PACK
+    done
+  elif [ "$1" == "set" ]; then
+    shift
+    PACK=$1
+    if [ -z "$PACK" ]; then
+      echo ERROR: do not set a zero length string &>2
+      return 1
+    fi
+    shift
+    if [ ! -d $HOME/go ]; then
+      mkdir $HOME/go
+    fi
+    if [ ! -d $HOME/go/$PACK ]; then
+      mkdir $HOME/go/$PACK
+    fi
+    GOPATH=$HOME/go/$PACK
+    export GOPATH
+    PATH="$GOPATH/bin:$PATH"
+    export PATH
+    which godep &> /dev/null
+    if [ $? -ne 0 ]; then
+      echo Godep not installed, install via:
+      echo go get github.com/tools/godep
+    fi
+    for adir in bin pkg src; do
+      mkdir $GOPATH/$adir &> /dev/null
+    done
+  else
+    echo "Pass options of: "
+    echo " list"
+    echo " set \$pack where \$pack is one of the go packages found in list"
+  fi
+}
+
+function d {
+  for var in `env|grep DOCKER|awk -F= '{print $1}'`; do unset $var; done
+  if [ -z "${SWARM_MANAGER}" ]; then
+    echo $SWARM_MANAGER is not set, set it to the swarm manager and port number, usually :4000
+    return 1
+  fi
+  docker -H ${SWARM_MANAGER} $@
+}
+function dc {
+  for var in `env|grep DOCKER|awk -F= '{print $1}'`; do unset $var; done
+  if [ -z "${SWARM_MANAGER}" ]; then
+    echo $SWARM_MANAGER is not set, set it to the swarm manager and port number, usually :4000
+    return 1
+  fi
+  docker-compose -H ${SWARM_MANAGER} $@
+}
+
+function clean_docker {
+  docker rm `docker ps -a|grep -v ^CONTAIN|awk '{print $1}'`
+  docker rmi `docker images|grep -v IMAGE| egrep -v "^debian|^ruby|^ubuntu" |awk '{print $3}'`
+}
