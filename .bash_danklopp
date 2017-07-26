@@ -250,7 +250,6 @@ if [ $? -eq 0 ]; then
 else
    echo "You do not have Python properly configured for pyenv to function"
 fi
-export DOCKER_HOST=tcp://localhost:4243
 
 which rbenv &> /dev/null
 if [ $? -eq 0 ]; then
@@ -527,3 +526,4 @@ function clean_docker {
   docker rm `docker ps -a|grep -v ^CONTAIN|awk '{print $1}'`
   docker rmi `docker images|grep -v IMAGE| egrep -v "^debian|^ruby|^ubuntu" |awk '{print $3}'`
 }
+export ANSIBLE_HOST_KEY_CHECKING=False
