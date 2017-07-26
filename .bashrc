@@ -23,3 +23,6 @@ fi
 if [ -f ~/.bash_assignment_4 ]; then
    source ~/.bash_assignment_4
 fi
+if [ -f ~/.bash_assignment_5 ]; then
+   source ~/.bash_assignment_5
+fi
