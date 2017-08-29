@@ -527,3 +527,19 @@ function clean_docker {
   docker rmi `docker images|grep -v IMAGE| egrep -v "^debian|^ruby|^ubuntu" |awk '{print $3}'`
 }
 export ANSIBLE_HOST_KEY_CHECKING=False
+
+function pfx_extract {
+  base="$1"
+  name="${base%????}"
+  openssl pkcs12 -in ${name}.pfx -nocerts -out /tmp/key.pem -nodes
+  openssl pkcs12 -in ${name}.pfx -nokeys -out ${name}.pem
+  openssl rsa -in /tmp/key.pem -out ${name}.key
+  rm -f /tmp/key.pem
+}
+
+function x509_subject {
+  name="$1"
+  openssl x509 -in ${name} -text | grep Subject:
+}
+
+
