@@ -22,4 +22,12 @@ yum-config-manager \
 yum makecache fast
 yum install -y docker-1.12.6-16.el7.centos
 
+systemctl stop firewalld
+systemctl disable firewalld
+
 systemctl enable docker.service && systemctl start docker
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+sysctl -w net.bridge.bridge-nf-call-iptables=1
+##addr=`ip a show dev eth1|grep 'inet '|awk '{print $2}'|awk -F/ '{print $1}'`
+
+#echo "$addr `hostname`" >> /etc/hosts
