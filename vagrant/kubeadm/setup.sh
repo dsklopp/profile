@@ -12,6 +12,11 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
 EOF
 
 setenforce 0
+
+swappart=`cat /etc/fstab |grep swap|awk '{print $1}'`
+swapoff $swappart
+sed -i "/swap/d" /etc/fstab
+
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/sysconfig/selinux
 yum install -y kubelet kubeadm
 systemctl enable kubelet && systemctl start kubelet
@@ -20,7 +25,7 @@ yum-config-manager \
     --add-repo \
     https://download.docker.com/linux/centos/docker-ce.repo
 yum makecache fast
-yum install -y docker-1.12.6-16.el7.centos
+yum install -y docker-1.12.6
 
 systemctl stop firewalld
 systemctl disable firewalld
@@ -30,4 +35,7 @@ echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 sysctl -w net.bridge.bridge-nf-call-iptables=1
 ##addr=`ip a show dev eth1|grep 'inet '|awk '{print $2}'|awk -F/ '{print $1}'`
 
-#echo "$addr `hostname`" >> /etc/hosts
+myaddr=`ip addr show dev eth1|grep 'inet '|awk '{print $2}'|awk -F/ '{print $1}'`
+if [ "`hostname`" == "k8s-master" ]; then
+	kubeadm init --apiserver-advertise-address $myaddr --kubernetes-version "stable-1.8"
+fi
