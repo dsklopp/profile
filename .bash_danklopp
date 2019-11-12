@@ -542,4 +542,17 @@ function x509_subject {
   openssl x509 -in ${name} -text | grep Subject:
 }
 
+function setup_meteor_react {
+  meteor npm install --save react react-dom
+  meteor remove blaze-html-templates
+  meteor add static-html
+  meteor add react-meteor-data
+}
 
+function setup_istio {
+  cd $GOPATH/src/istio.io/
+  export MIXER_REPO=$GOPATH/src/istio.io/istio/mixer
+  export ISTIO=$GOPATH/src/istio.io
+  cd $MIXER_REPO/adapter/mygrpcadapter
+  
+}
