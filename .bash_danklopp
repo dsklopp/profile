@@ -556,3 +556,17 @@ function setup_istio {
   cd $MIXER_REPO/adapter/mygrpcadapter
   
 }
+
+function get_json_rest {
+  if [ -z "$1" ]; then
+    echo ERROR: Pass a URL 1>&2
+    return 0
+  fi
+  curl $1 2>/dev/null | python -mjson.tool
+  errcode=$?
+  if [ $errcode -ne 0 ]; then
+    echo ERROR: Could not pull document, error code $errcode
+  fi
+}
+
+export PATH=/usr/local/opt/helm@2/bin:$PATH
